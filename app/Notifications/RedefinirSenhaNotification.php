@@ -71,4 +71,13 @@ class RedefinirSenhaNotification extends Notification
             //
         ];
     }
+
+    protected function rules()
+    {
+        return [
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:3'
+        ];
+    }
 }

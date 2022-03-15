@@ -20,12 +20,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::resource('tarefa', 'TarefaController');
+Route::middleware('verified')->get('/home', 'HomeController@index')->name('home');
 
-Route::get('/mensagem-teste', function () {
+Route::middleware('verified')->resource('tarefa', 'TarefaController');
+
+Route::middleware('verified')->get('/mensagem-teste', function () {
     //return new MensagemTesteMail();
 
     Mail::to('lucasali2003@gmail.com')->send(new MensagemTesteMail);
