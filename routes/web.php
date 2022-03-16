@@ -21,9 +21,9 @@ Route::get('/', function () {
 });
 
 Auth::routes(['verify' => true]);
-
+/*
 Route::middleware('verified')->get('/home', 'HomeController@index')->name('home');
-
+*/
 Route::middleware('verified')->resource('tarefa', 'TarefaController');
 
 Route::middleware('verified')->get('/mensagem-teste', function () {

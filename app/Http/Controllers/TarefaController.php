@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NovaTarefaMail;
 use App\Models\Tarefa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+
+use function PHPUnit\Framework\returnValueMap;
 
 class TarefaController extends Controller
 {
@@ -18,7 +22,11 @@ class TarefaController extends Controller
      */
     public function index()
     {
-        //
+        $user_id = auth()->user()->id;
+
+        $tarefas = Tarefa::where('user_id', $user_id)->paginate(10);
+
+        return view('tarefas.index', ['tarefas' => $tarefas]);
     }
 
     /**
@@ -39,7 +47,14 @@ class TarefaController extends Controller
      */
     public function store(Request $request)
     {
-        $tarefa = Tarefa::create($request->all());
+        $dados = $request->all();
+        $dados['user_id'] = auth()->user()->id;
+
+        $tarefa = Tarefa::create($dados);
+
+        $detinatario = auth()->user()->email;
+
+        Mail::to($detinatario)->send(new NovaTarefaMail($tarefa));
 
         return redirect()->route('tarefa.show', ['tarefa' => $tarefa->id]);
     }
@@ -52,7 +67,7 @@ class TarefaController extends Controller
      */
     public function show(Tarefa $tarefa)
     {
-        dd('estamos aqui');
+        return view('tarefas.show', ['tarefa' => $tarefa]);
     }
 
     /**
@@ -62,8 +77,16 @@ class TarefaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Tarefa $tarefa)
-    {
-        //
+    {   
+
+        if($tarefa->user_id == auth()->user()->id){
+
+            return view('tarefas.edit', ['tarefa' => $tarefa]);
+
+        }
+
+        return redirect()->route('tarefa.index');
+
     }
 
     /**
@@ -75,7 +98,15 @@ class TarefaController extends Controller
      */
     public function update(Request $request, Tarefa $tarefa)
     {
-        //
+        if($tarefa->user_id == auth()->user()->id){
+
+            $tarefa->update($request->all());
+
+            return redirect()->route('tarefa.show', $tarefa->id);
+        
+        }
+
+        return redirect()->route('tarefa.index');
     }
 
     /**
@@ -86,6 +117,13 @@ class TarefaController extends Controller
      */
     public function destroy(Tarefa $tarefa)
     {
-        //
+        if($tarefa->user_id == auth()->user()->id){
+            
+            $tarefa->delete();
+            
+            return redirect()->route('tarefa.index');
+        }
+
+        return redirect()->route('tarefa.index');
     }
 }
