@@ -26,7 +26,7 @@ Route::middleware('verified')->get('/home', 'HomeController@index')->name('home'
 */
 Route::middleware('verified')->resource('tarefa', 'TarefaController');
 
-Route::get('tarefa/exportacao', 'TarefaController@exportacao')->name('tarefa.exportacao');
+Route::get('/tarefas/exportacao', 'TarefaController@exportacao')->name('tarefa.exportacao');
 
 Route::middleware('verified')->get('/mensagem-teste', function () {
     //return new MensagemTesteMail();
