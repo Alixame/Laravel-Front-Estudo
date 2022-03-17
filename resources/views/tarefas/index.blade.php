@@ -8,8 +8,9 @@
             <div class="h2 text-center">Tarefas</div>
 
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between">
                     <a href="{{ route('tarefa.create')}}" class="btn btn-success">Criar</a>
+                    <a href="{{ route('tarefa.exportacao')}}" class="btn btn-info">Gerar Excel</a>
                 </div>
 
                 <div class="card-body">

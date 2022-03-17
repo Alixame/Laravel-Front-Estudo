@@ -6,6 +6,8 @@ use App\Mail\NovaTarefaMail;
 use App\Models\Tarefa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TarefasExport;
 
 use function PHPUnit\Framework\returnValueMap;
 
@@ -126,4 +128,9 @@ class TarefaController extends Controller
 
         return redirect()->route('tarefa.index');
     }
+
+    public function exportacao() {
+        return Excel::download(new TarefasExport, 'tarefas.xlsx');
+    }
+
 }
