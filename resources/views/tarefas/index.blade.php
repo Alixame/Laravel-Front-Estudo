@@ -10,7 +10,18 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <a href="{{ route('tarefa.create')}}" class="btn btn-success">Criar</a>
-                    <a href="{{ route('tarefa.exportacao')}}" class="btn btn-info">Gerar Excel</a>
+
+                    <div class="dropdown">
+                        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                          Exportar
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" href="{{ route('tarefa.exportacao', ['extensao' => 'xlsx'])}}">XLSX</a>
+                          <a class="dropdown-item" href="{{ route('tarefa.exportacao', ['extensao' => 'csv'])}}">CSV</a>
+                          <a class="dropdown-item" href="{{ route('tarefa.exportacao', ['extensao' => 'pdf'])}}">PDF (CLASS EXEL)</a>
+                          <a class="dropdown-item" href="{{ route('tarefa.exportar', ['extensao' => 'pdf'])}}" target="_blank">PDF (CLASS DOM)</a>
+                        </div>
+                      </div>
                 </div>
 
                 <div class="card-body">

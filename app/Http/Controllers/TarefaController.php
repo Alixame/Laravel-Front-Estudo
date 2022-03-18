@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\TarefasExport;
+use App\Models\User;
+use PDF;
 
 use function PHPUnit\Framework\returnValueMap;
 
@@ -129,8 +131,46 @@ class TarefaController extends Controller
         return redirect()->route('tarefa.index');
     }
 
-    public function exportacao() {
-        return Excel::download(new TarefasExport, 'tarefas.xlsx');
+    
+    // METODO CRIADO A PARTIR DO PACOTE 'EXEL' PARA EXPORTAR ARQUIVOS DO TIPO 'XLSX', 'CSV' E 'PDF'
+    public function exportacao($extensao) {
+
+        // VERIFICANDO SE A EXTENSÃO ESCOLHIDA É PERMITIDA
+        if (in_array($extensao, ['xlsx', 'csv', 'pdf'])) {
+
+            // RETORNANDO ARQUIVO COM A EXTENSÃO DESEJADA
+            return Excel::download(new TarefasExport,  'tarefas.'.$extensao);
+
+        }
+        
+        // SE NÃO PASSAR NA VALIDÇÃO RETORNA PAGINA INDEX
+        return redirect()->route('tarefa.index');
+
+    }
+
+    // METODO CRIADO A PARTIR DO PACOTE 'DOMPDF' (EXPECIFICO PARA PDF)
+    public function exportar() {
+
+        //  RECUPERANDO DA DOS DO USUARIO AUTENTICADO
+        $usuario = User::find(auth()->user()->id);
+
+        // RECURAPERANDO TAREFAS RELACIONADAS AO USUARIO
+        $tarefas =  $usuario->tarefas()->get();
+
+        // DEFININDO VIEW QUE SERÁ GERADA COMO PDF E PASSANDO VARIAVEIS
+        $pdf = PDF::loadView('tarefas.pdf', ['tarefas' => $tarefas]);
+        
+        // DEFININDO TIPO DE PAPEL E ORIENTAÇÃO DA PAGINA A SER IMPRESSA
+        // tipos de papeis: a4, letter
+        // orientação: landscape (paisagem), portrait(retrato) <- PADRÃO
+        $pdf->setPaper('a4','landscape');
+
+        // RETORNANDO O DOWNLOAD DO ARQUIVO DIRETAMENTE
+        //return $pdf->download('tarefa.pdf');
+        
+        // RETORNA A TELA DE IMPRESSÃO PARA PRE-VISUALIZAÇÃO
+        return $pdf->stream('tarefa.pdf');
+
     }
 
 }
